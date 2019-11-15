@@ -12,6 +12,10 @@ const App = () => {
     setSavedList([...savedList, movie]);
   };
 
+  const updateSavedList = movieId => {
+    setSavedList(savedList.filter(movie => movie.id !== movieId));
+  }
+
   return (
     <>
       <SavedList list={savedList} />
@@ -19,7 +23,7 @@ const App = () => {
       <Route
         path="/movies/:id"
         render={props => {
-          return <Movie {...props} addToSavedList={addToSavedList} />;
+          return <Movie {...props} addToSavedList={addToSavedList} updateSavedList={updateSavedList} />;
         }}
       />
       <Route 

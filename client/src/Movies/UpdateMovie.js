@@ -11,6 +11,7 @@ const initialMovie = {
 
 const UpdateMovie = props => {
     const [movie, setMovie] = useState(initialMovie);
+    
 
     useEffect(() => {
         axios
@@ -22,12 +23,21 @@ const UpdateMovie = props => {
     // in handlechange we need to set an if statement for stars and split() so it comes as an array instead of string
 
     const handleChange = e => {
+        e.persist();
         let value = e.target.value;
-        setMovie({
-            ...movie,
-            [e.target.name]: value
-        })
-    }
+        if (e.target.name === "metascore") {
+            value = parseInt(value, 10);
+        }
+        setMovie({ ...movie, [e.target.name]: value });
+        if (e.target.name === "stars") {
+            setMovie(prevData => ({
+                ...prevData,
+                [e.target.name]: e.target.value.split(",")
+            }));
+        } else {
+            setMovie(prevData => ({ ...prevData, [e.target.name]: value}));
+        }
+    };
        
     const handleSubmit = e => {
         e.preventDefault();
