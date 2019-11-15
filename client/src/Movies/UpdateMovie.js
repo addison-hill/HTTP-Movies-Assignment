@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const initialMovie = {
+    id: null,
     title: '',
     director: '',
     metascore: '',
@@ -11,27 +12,39 @@ const initialMovie = {
 const UpdateMovie = props => {
     const [movie, setMovie] = useState(initialMovie);
 
+    useEffect(() => {
+        axios
+            .get(`http://localhost:5000/api/movies/${props.match.params.id}`)
+            .then(res => setMovie(res.data))
+            .catch(err => console.log(err));
+    }, [props.match.params.id]);
+
+    // in handlechange we need to set an if statement for stars and split() so it comes as an array instead of string
+
     const handleChange = e => {
         let value = e.target.value;
         setMovie({
             ...movie,
             [e.target.name]: value
-        });
-    };
+        })
+    }
+       
+    const handleSubmit = e => {
+        e.preventDefault();
+        axios
+            .put(`http://localhost:5000/api/movies/${movie.id}`, movie)
+            .then(res => {
+                alert('Movie Details Updated')
+                props.history.push('/');
+            })
+            .catch(err => console.log(err));
+    }
 
-    // const handleSubmit = e => {
-    //     e.preventDefault();
-    //     axios
-    //         .put(`http://localhost:5000/api/movies/${movie.id}`, movie)
-    //         .then(res => {
-    //             props
-    //         })
-    // }
 
     return (
         <div>
             <h2>Update Item</h2>
-            <form >
+            <form onSubmit={handleSubmit}>
                 <input 
                     type="text"
                     name="title"
@@ -61,10 +74,10 @@ const UpdateMovie = props => {
                     name="stars"
                     placeholder="Stars"
                     onChange={handleChange}
-                    value={movie.title}
+                    value={movie.stars}
                 />
                 <br/>
-                <button className="update-btn">Update</button>
+                <button className="update-btn" type="submit">Update</button>
             </form>
         </div>
     );
